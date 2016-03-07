@@ -157,28 +157,27 @@ var CommentForm = React.createClass({
           'Ok, sounds good.',
           'Nope, not going to happen.'
         ];
-        this.refs.comment.addEventListener('value-changed', function(e) {
-          this.handleTextChange(e);
-        }.bind(this));
+        this.refs.submit.addEventListener('click', this.handleSubmit);
+        this.refs.comment.addEventListener('value-changed', this.handleTextChange);
+        this.refs.author.addEventListener('value-changed', this.handleAuthorChange);
       }.bind(this));
       this.initialized = true;
     }
 
     return (
-      <form className="commentForm" onSubmit={this.handleSubmit}>
-        <input
-          type="text"
+      <form className="commentForm">
+        <paper-input
+          ref="author"
           placeholder="Your name"
-          value={this.state.author}
-          onChange={this.handleAuthorChange}
-        />
+          value={this.state.author}>
+        </paper-input>
         <vaadin-combo-box
           ref="comment"
           label="Say something..."
           allow-custom-value
           value={this.state.text}>
         </vaadin-combo-box>
-        <input type="submit" value="Post" />
+        <paper-button ref="submit">Post</paper-button>
       </form>
     );
   }
