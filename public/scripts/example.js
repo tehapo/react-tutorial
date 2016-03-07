@@ -1,3 +1,4 @@
+/* jshint ignore:start */
 /**
  * This file provided by Facebook is for non-commercial testing and evaluation
  * purposes only. Facebook reserves all rights not expressly granted.
@@ -84,18 +85,24 @@ var CommentBox = React.createClass({
 
 var CommentList = React.createClass({
   render: function() {
-    var commentNodes = this.props.data.map(function(comment) {
-      return (
-        <Comment author={comment.author} key={comment.id}>
-          {comment.text}
-        </Comment>
-      );
-    });
     return (
-      <div className="commentList">
-        {commentNodes}
-      </div>
+      <vaadin-grid ref="grid" selection-mode="disabled">
+        <table>
+          <colgroup>
+            <col name="id" />
+            <col name="author" />
+            <col name="text" />
+          </colgroup>
+        </table>
+      </vaadin-grid>
     );
+  },
+
+  componentWillReceiveProps: function(newProps) {
+    // Compare length to avoid re-rendering grid constantly.
+    if (this.props.data.length !== newProps.data.length) {
+      this.refs.grid.items = newProps.data;
+    }
   }
 });
 
@@ -140,7 +147,9 @@ var CommentForm = React.createClass({
   }
 });
 
-ReactDOM.render(
-  <CommentBox url="/api/comments" pollInterval={2000} />,
-  document.getElementById('content')
-);
+window.addEventListener('WebComponentsReady', function() {
+  ReactDOM.render(
+    <CommentBox url="/api/comments" pollInterval={2000} />,
+    document.getElementById('content')
+  );
+});
