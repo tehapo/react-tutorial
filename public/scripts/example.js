@@ -84,7 +84,15 @@ var CommentBox = React.createClass({
 });
 
 var CommentList = React.createClass({
+  initialized: false,
+
   render: function() {
+    Polymer.Base.async(function() {
+      if (!this.initialized) {
+        this.initializeGrid();
+        this.initialized = true;
+      };
+    }.bind(this));
     return (
       <vaadin-grid ref="grid" selection-mode="disabled">
         <table>
@@ -93,9 +101,24 @@ var CommentList = React.createClass({
             <col name="author" />
             <col name="text" />
           </colgroup>
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Author</th>
+              <th>Comment</th>
+            </tr>
+          </thead>
         </table>
       </vaadin-grid>
     );
+  },
+
+  initializeGrid: function() {
+    this.refs.grid.columns[0].renderer = function(cell) {
+      // We happen to know that the id is always a timestamp.
+      var timestamp = new Date(cell.data);
+      cell.element.textContent = (timestamp.getMonth() + 1) + '/' + timestamp.getDate() + '/' + timestamp.getFullYear();
+    };
   },
 
   componentWillReceiveProps: function(newProps) {
