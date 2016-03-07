@@ -1,0 +1,28 @@
+{
+  "name": "react-tutorial",
+  "description": "Code from the React tutorial.",
+  "main": "server.js",
+  "authors": [
+    "petehunt",
+    "Teemu Pöntelin / Vaadin Ltd"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "react",
+    "tutorial",
+    "comment",
+    "example"
+  ],
+  "homepage": "https://github.com/reactjs/react-tutorial",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "vaadin-grid": "^1.0.0"
+  }
+}
