@@ -23,6 +23,7 @@
     "tests"
   ],
   "dependencies": {
-    "vaadin-grid": "^1.0.0"
+    "vaadin-grid": "^1.0.0",
+    "vaadin-combo-box": "^1.0.0-alpha6"
   }
 }

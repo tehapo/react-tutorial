@@ -130,6 +130,7 @@ var CommentList = React.createClass({
 });
 
 var CommentForm = React.createClass({
+  initialized: false,
   getInitialState: function() {
     return {author: '', text: ''};
   },
@@ -150,6 +151,19 @@ var CommentForm = React.createClass({
     this.setState({author: '', text: ''});
   },
   render: function() {
+    if (!this.initialized) {
+      Polymer.Base.async(function() {
+        this.refs.comment.items = [
+          'Ok, sounds good.',
+          'Nope, not going to happen.'
+        ];
+        this.refs.comment.addEventListener('value-changed', function(e) {
+          this.handleTextChange(e);
+        }.bind(this));
+      }.bind(this));
+      this.initialized = true;
+    }
+
     return (
       <form className="commentForm" onSubmit={this.handleSubmit}>
         <input
@@ -158,12 +172,12 @@ var CommentForm = React.createClass({
           value={this.state.author}
           onChange={this.handleAuthorChange}
         />
-        <input
-          type="text"
-          placeholder="Say something..."
-          value={this.state.text}
-          onChange={this.handleTextChange}
-        />
+        <vaadin-combo-box
+          ref="comment"
+          label="Say something..."
+          allow-custom-value
+          value={this.state.text}>
+        </vaadin-combo-box>
         <input type="submit" value="Post" />
       </form>
     );
