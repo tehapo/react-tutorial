@@ -166,18 +166,21 @@ var CommentForm = React.createClass({
 
     return (
       <form className="commentForm">
-        <paper-input
-          ref="author"
-          placeholder="Your name"
-          value={this.state.author}>
-        </paper-input>
-        <vaadin-combo-box
-          ref="comment"
-          label="Say something..."
-          allow-custom-value
-          value={this.state.text}>
-        </vaadin-combo-box>
-        <paper-button ref="submit">Post</paper-button>
+        <fieldset>
+          <legend>Add your comment</legend>
+          <paper-input
+            ref="author"
+            placeholder="Your name"
+            value={this.state.author}>
+          </paper-input>
+          <vaadin-combo-box
+            ref="comment"
+            label="Say something..."
+            allow-custom-value
+            value={this.state.text}>
+          </vaadin-combo-box>
+          <paper-button ref="submit">Post</paper-button>
+        </fieldset>
       </form>
     );
   }
