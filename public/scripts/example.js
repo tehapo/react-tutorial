@@ -107,6 +107,7 @@ var CommentList = React.createClass({
             <col name="id" />
             <col name="author" />
             <col name="text" />
+            <col name="file" />
           </colgroup>
           <thead>
             <tr>
@@ -125,6 +126,13 @@ var CommentList = React.createClass({
       // We happen to know that the id is always a timestamp.
       var timestamp = new Date(cell.data);
       cell.element.textContent = (timestamp.getMonth() + 1) + '/' + timestamp.getDate() + '/' + timestamp.getFullYear();
+    };
+    this.refs.grid.columns[3].renderer = function(cell) {
+      if (cell.data) {
+        cell.element.innerHTML = '<img src="uploads/' + cell.data + '" height="50" />';
+      } else {
+        cell.element.innerHTML = '<img src="uploads/vaadin.png" height="20" />';
+      }
     };
     this.refs.grid.addEventListener('selected-items-changed', function() {
       this.props.onCommentSelected(this.refs.grid.selection.selected());
@@ -154,11 +162,13 @@ var CommentForm = React.createClass({
     e.preventDefault();
     var author = this.state.author.trim();
     var text = this.state.text.trim();
+    var file = this.refs.upload.files[0].name;
     if (!text || !author) {
       return;
     }
-    this.props.onCommentSubmit({author: author, text: text});
+    this.props.onCommentSubmit({author: author, text: text, file: file});
     this.setState({author: '', text: ''});
+    this.refs.upload.files = [];
   },
   render: function() {
     if (!this.initialized) {
@@ -189,6 +199,7 @@ var CommentForm = React.createClass({
             allow-custom-value
             value={this.state.text}>
           </vaadin-combo-box>
+          <vaadin-upload ref="upload" accept=".png" max-files="1" target="/upload"></vaadin-upload>
           <paper-button ref="submit">Post</paper-button>
         </fieldset>
       </form>

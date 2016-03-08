@@ -26,6 +26,7 @@
     "vaadin-grid": "^1.0.0",
     "vaadin-combo-box": "^1.0.0-alpha6",
     "paper-input": "polymerelements/paper-input#^1.1.9",
-    "paper-button": "polymerelements/paper-button#^1.0.11"
+    "paper-button": "polymerelements/paper-button#^1.0.11",
+    "vaadin-upload": "^1.0.0-alpha1"
   }
 }

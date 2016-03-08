@@ -14,6 +14,7 @@ var fs = require('fs');
 var path = require('path');
 var express = require('express');
 var bodyParser = require('body-parser');
+var busboy = require('connect-busboy');
 var app = express();
 
 var COMMENTS_FILE = path.join(__dirname, 'comments.json');
@@ -23,6 +24,7 @@ app.set('port', (process.env.PORT || 3000));
 app.use('/', express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(busboy());
 
 // Additional middleware which will set headers that we need on each request.
 app.use(function(req, res, next) {
@@ -45,6 +47,22 @@ app.get('/api/comments', function(req, res) {
   });
 });
 
+app.post('/upload', function(req, res) {
+  req.pipe(req.busboy);
+  req.busboy.on('file', function(fieldname, file, filename) {
+    var path = __dirname + '/public/uploads/' + filename;
+    console.log('Uploading file ' + path);
+    var fstream = fs.createWriteStream(path);
+    file.pipe(fstream);
+  });
+  req.busboy.on('finish', function() {
+    res.json({
+      message: 'Uploads done.'
+    });
+  });
+});
+
+
 app.post('/api/comments', function(req, res) {
   fs.readFile(COMMENTS_FILE, function(err, data) {
     if (err) {
@@ -59,6 +77,7 @@ app.post('/api/comments', function(req, res) {
       id: Date.now(),
       author: req.body.author,
       text: req.body.text,
+      file: req.body.file
     };
     comments.push(newComment);
     fs.writeFile(COMMENTS_FILE, JSON.stringify(comments, null, 4), function(err) {
