@@ -72,12 +72,19 @@ var CommentBox = React.createClass({
     this.loadCommentsFromServer();
     setInterval(this.loadCommentsFromServer, this.props.pollInterval);
   },
+
+  commentSelected: function(index) {
+    if (index.length > 0) {
+      this.refs.form.setState(this.state.data[index]);
+    }
+  },
+
   render: function() {
     return (
       <div className="commentBox">
         <h1>Comments</h1>
-        <CommentList data={this.state.data} />
-        <CommentForm onCommentSubmit={this.handleCommentSubmit} />
+        <CommentList onCommentSelected={this.commentSelected} data={this.state.data} />
+        <CommentForm ref="form" onCommentSubmit={this.handleCommentSubmit} />
       </div>
     );
   }
@@ -94,7 +101,7 @@ var CommentList = React.createClass({
       };
     }.bind(this));
     return (
-      <vaadin-grid ref="grid" selection-mode="disabled">
+      <vaadin-grid ref="grid" selection-mode="single">
         <table>
           <colgroup>
             <col name="id" />
@@ -119,6 +126,9 @@ var CommentList = React.createClass({
       var timestamp = new Date(cell.data);
       cell.element.textContent = (timestamp.getMonth() + 1) + '/' + timestamp.getDate() + '/' + timestamp.getFullYear();
     };
+    this.refs.grid.addEventListener('selected-items-changed', function() {
+      this.props.onCommentSelected(this.refs.grid.selection.selected());
+    }.bind(this));
   },
 
   componentWillReceiveProps: function(newProps) {
