@@ -162,7 +162,7 @@ var CommentForm = React.createClass({
     e.preventDefault();
     var author = this.state.author.trim();
     var text = this.state.text.trim();
-    var file = this.refs.upload.files[0].name;
+    var file = (this.refs.upload.files.length > 0 ? this.refs.upload.files[0].name : '');
     if (!text || !author) {
       return;
     }
