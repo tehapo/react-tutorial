@@ -29,6 +29,25 @@ var Comment = React.createClass({
   }
 });
 
+var VaadinGrid = React.createClass({
+
+  render: function() {
+    return (
+      <vaadin-grid ref="grid" selection-mode={this.props.selectionMode}>
+        {this.props.children}
+      </vaadin-grid>
+    );
+  },
+
+  componentWillReceiveProps: function(newProps) {
+    if (!this.refs.grid.items || this.refs.grid.items.length !== newProps.items.length) {
+      this.refs.grid.items = newProps.items;
+    }
+    this.refs.grid.addEventListener('selected-items-changed', this.props.onSelectedItemsChanged);
+  }
+});
+
+
 var CommentBox = React.createClass({
   loadCommentsFromServer: function() {
     $.ajax({
@@ -91,17 +110,14 @@ var CommentBox = React.createClass({
 });
 
 var CommentList = React.createClass({
-  initialized: false,
+
+  selectedItemsChanged: function(e) {
+    console.log('selectedItemsChanged', e);
+  },
 
   render: function() {
-    Polymer.Base.async(function() {
-      if (!this.initialized) {
-        this.initializeGrid();
-        this.initialized = true;
-      };
-    }.bind(this));
     return (
-      <vaadin-grid ref="grid" selection-mode="single">
+      <VaadinGrid items={this.props.data} selectionMode="multi" onSelectedItemsChanged={this.selectedItemsChanged}>
         <table>
           <colgroup>
             <col name="id" />
@@ -117,33 +133,8 @@ var CommentList = React.createClass({
             </tr>
           </thead>
         </table>
-      </vaadin-grid>
+      </VaadinGrid>
     );
-  },
-
-  initializeGrid: function() {
-    this.refs.grid.columns[0].renderer = function(cell) {
-      // We happen to know that the id is always a timestamp.
-      var timestamp = new Date(cell.data);
-      cell.element.textContent = (timestamp.getMonth() + 1) + '/' + timestamp.getDate() + '/' + timestamp.getFullYear();
-    };
-    this.refs.grid.columns[3].renderer = function(cell) {
-      if (cell.data) {
-        cell.element.innerHTML = '<img src="uploads/' + cell.data + '" height="50" />';
-      } else {
-        cell.element.innerHTML = '<img src="uploads/vaadin.png" height="20" />';
-      }
-    };
-    this.refs.grid.addEventListener('selected-items-changed', function() {
-      this.props.onCommentSelected(this.refs.grid.selection.selected());
-    }.bind(this));
-  },
-
-  componentWillReceiveProps: function(newProps) {
-    // Compare length to avoid re-rendering grid constantly.
-    if (this.props.data.length !== newProps.data.length) {
-      this.refs.grid.items = newProps.data;
-    }
   }
 });
 
